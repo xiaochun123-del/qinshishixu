@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>集卡册 · 秦时时序</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<section class="page">
+  <a href="seasons.html" class="back-link">← 返回四时</a>
+
+  <div class="page-head">
+    <h2>秦味集卡册</h2>
+    <p>点亮属于你的三秦味道</p>
+  </div>
+
+  <div class="collect-summary" id="summary"></div>
+  <div class="collection-grid" id="grid"></div>
+
+  <!-- 底部引导：下一步去哪 -->
+  <div class="page-cta">
+    <a href="mbti.html" class="cta-btn">测测你的美食人格 →</a>
+    <a href="seasons.html" class="cta-btn ghost">← 返回四时</a>
+  </div>
+</section>
+
+<script src="js/data.js"></script>
+<script src="js/main.js"></script>
+<script>
+renderNav("collection");
+const unlocked = getUnlocked();
+const grid = document.getElementById("grid");
+const summary = document.getElementById("summary");
+
+const total = FOODS.length;
+const done = FOODS.filter(f => unlocked.includes(f.id)).length;
+summary.innerHTML = `<div class="big">${done}<small> / ${total}</small></div>
+  <p style="color:var(--ink-dim);font-size:13px;letter-spacing:.2em;margin-top:8px">
+  ${done === total ? '全部点亮，你是真正的秦味收藏家' : '继续探索，点亮更多味道'}
+  </p>`;
+
+FOODS.forEach(f => {
+  const isDone = unlocked.includes(f.id);
+  const card = document.createElement("a");
+  card.href = `map.html?season=${f.season}`;
+  card.className = "collect-card" + (isDone ? " unlocked" : "");
+  card.innerHTML = `
+    <div class="thumb" style="background-image:url('${f.img}')"></div>
+    <div class="meta">
+      <h4>${isDone ? f.name : '未点亮'}</h4>
+      <span>${SEASONS[f.season].cn} · ${f.city}</span>
+    </div>
+    <div class="lock">${isDone ? '已集' : '待点亮'}</div>`;
+  grid.appendChild(card);
+});
+</script>
+</body>
+</html>

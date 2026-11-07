@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>秦时时序 · 循四时之序，品三秦之味</title>
+<link rel="stylesheet" href="css/style.css">
+<style>
+  /* 粒子层压在山峦之上、文字之下 */
+  .hero-inner { z-index: 3; }
+</style>
+</head>
+<body>
+
+<section class="hero">
+  <!-- 山峦层 -->
+  <svg class="hero-mountains" viewBox="0 0 1440 500" preserveAspectRatio="none">
+    <path d="M0,380 L180,240 L320,320 L520,180 L720,300 L900,160 L1100,280 L1280,200 L1440,300 L1440,500 L0,500 Z"
+          fill="rgba(201,161,90,.06)"/>
+    <path d="M0,420 L200,320 L400,400 L600,300 L820,380 L1040,280 L1240,360 L1440,320 L1440,500 L0,500 Z"
+          fill="rgba(201,161,90,.1)"/>
+    <path d="M0,460 L240,400 L480,450 L720,390 L960,440 L1200,400 L1440,430 L1440,500 L0,500 Z"
+          fill="rgba(14,12,10,.8)"/>
+  </svg>
+
+  <!-- 粒子层 -->
+  <canvas id="particles"
+          style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:2;"></canvas>
+
+  <div class="hero-inner">
+    <div class="kicker">SHAANXI · SEASONS · FOOD</div>
+    <h1>秦时时序</h1>
+    <p class="sub">循四时之序　品三秦之味</p>
+    <a href="seasons.html" class="cta">启程 · 循味四时</a>
+  </div>
+</section>
+
+<script src="js/data.js"></script>
+<script src="js/main.js"></script>
+
+<script>
+/* ===== 金色粒子：缓慢漂浮的小光点 ===== */
+(function () {
+  const canvas = document.getElementById("particles");
+  if (!canvas) return;
+  const ctx = canvas.getContext("2d");
+  const DPR = Math.min(window.devicePixelRatio || 1, 2);
+
+  let w = 0, h = 0;
+  const dots = [];
+  const COUNT = 55;          // 粒子数量，想多就调大
+  const SPEED = 0.35;        // 整体速度，想慢就调小
+  const COLOR = "201,161,90"; // 金色 RGB
+
+  function resize() {
+    w = canvas.width = canvas.offsetWidth * DPR;
+    h = canvas.height = canvas.offsetHeight * DPR;
+  }
+
+  function init() {
+    dots.length = 0;
+    for (let i = 0; i < COUNT; i++) {
+      dots.push({
+        x: Math.random() * w,
+        y: Math.random() * h,
+        r: (Math.random() * 1.6 + 0.6) * DPR,
+        vx: (Math.random() - 0.5) * SPEED,
+        vy: (Math.random() - 0.5) * SPEED,
+        a: Math.random() * 0.5 + 0.25,   // 透明度
+        tw: Math.random() * Math.PI * 2, // 闪烁相位
+        tws: Math.random() * 0.02 + 0.005
+      });
+    }
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, w, h);
+    for (const d of dots) {
+      d.x += d.vx;
+      d.y += d.vy;
+      if (d.x < 0 || d.x > w) d.vx *= -1;
+      if (d.y < 0 || d.y > h) d.vy *= -1;
+
+      // 轻微呼吸闪烁
+      d.tw += d.tws;
+      const alpha = d.a * (0.65 + Math.sin(d.tw) * 0.35);
+
+      ctx.beginPath();
+      ctx.arc(d.x, d.y, d.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(${COLOR},${alpha})`;
+      ctx.shadowBlur = 8 * DPR;
+      ctx.shadowColor = `rgba(${COLOR},${alpha * 0.6})`;
+      ctx.fill();
+    }
+    ctx.shadowBlur = 0;
+    requestAnimationFrame(draw);
+  }
+
+  // 首次尺寸确定后再初始化
+  function start() {
+    resize();
+    if (w === 0 || h === 0) { requestAnimationFrame(start); return; }
+    init();
+    draw();
+  }
+
+  window.addEventListener("resize", () => {
+    resize();
+    init();
+  });
+
+  start();
+})();
+</script>
+</body>
+</html>

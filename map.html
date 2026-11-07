@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>时令地图 · 秦时时序</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<section class="page">
+  <a href="seasons.html" class="back-link">← 返回四时</a>
+
+  <div class="page-head">
+    <h2>时令地图</h2>
+    <p>点击地图上的点位，发现该地的时令味道</p>
+  </div>
+
+  <div class="map-layout">
+    <div>
+      <div class="map-wrap">
+        <svg viewBox="0 0 400 640" preserveAspectRatio="xMidYMid meet">
+          <path class="map-outline" d="
+            M 250 40 L 300 60 L 320 120 L 300 200 L 290 300 L 310 360
+            L 300 430 L 280 470 L 230 500 L 170 520 L 120 480 L 80 430
+            L 70 380 L 60 320 L 80 270 L 60 220 L 100 160 L 150 120 L 180 60 Z" />
+        </svg>
+      </div>
+
+      <div class="progress-bar"></div>
+
+      <!-- 进度下方显眼入口 -->
+      <a href="collection.html" class="map-cta">查看秦味集卡册 →</a>
+    </div>
+
+    <aside class="detail-panel">
+      <div class="detail-empty">点击地图点位<br>查看时令美食</div>
+      <div class="detail-body"></div>
+    </aside>
+  </div>
+</section>
+
+<script src="js/data.js"></script>
+<script src="js/main.js"></script>
+<script src="js/map.js"></script>
+<script>initMapPage();</script>
+</body>
+</html>
