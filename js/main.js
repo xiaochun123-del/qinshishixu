@@ -20,6 +20,15 @@ function savePersona(code) {
   if (!arr.includes(code)) { arr.push(code); localStorage.setItem(PERSONA_KEY, JSON.stringify(arr)); }
 }
 
+function resetAllData() {
+  if (confirm("确定要清除所有打卡、收藏和测试记录吗？")) {
+    localStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem(EXTRA_KEY);
+    localStorage.removeItem(PERSONA_KEY);
+    location.reload();
+  }
+}
+
 function toast(msg) {
   let t = $('#toast');
   if (!t) { t = document.createElement('div'); t.id = 'toast'; t.className = 'toast'; document.body.appendChild(t); }
@@ -33,13 +42,11 @@ function playDing() {
     const AudioCtx = window.AudioContext || window.webkitAudioContext;
     if (!AudioCtx) return;
     const ctx = new AudioCtx();
-    const osc1 = ctx.createOscillator();
-    const gain1 = ctx.createGain();
+    const osc1 = ctx.createOscillator(); const gain1 = ctx.createGain();
     osc1.type = 'sine'; osc1.frequency.setValueAtTime(880, ctx.currentTime);
     gain1.gain.setValueAtTime(0.3, ctx.currentTime); gain1.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.5);
     osc1.connect(gain1); gain1.connect(ctx.destination); osc1.start(); osc1.stop(ctx.currentTime + 0.5);
-    const osc2 = ctx.createOscillator();
-    const gain2 = ctx.createGain();
+    const osc2 = ctx.createOscillator(); const gain2 = ctx.createGain();
     osc2.type = 'triangle'; osc2.frequency.setValueAtTime(1318.51, ctx.currentTime);
     gain2.gain.setValueAtTime(0.15, ctx.currentTime); gain2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
     osc2.connect(gain2); gain2.connect(ctx.destination); osc2.start(); osc2.stop(ctx.currentTime + 0.4);
@@ -57,6 +64,7 @@ function renderNav(active) {
       <a href="mbti.html" class="${active==='mbti'?'active':''}">美食人格</a>
       <a href="extra.html" class="${active==='extra'?'active':''}">探索坊</a>
       <a href="about.html" class="${active==='about'?'active':''}">关于</a>
+      <a href="javascript:void(0)" onclick="resetAllData()" style="color:#C14E31; font-size:12px; border:1px solid #C14E31; padding:2px 8px; border-radius:2px; margin-left:10px;" title="清除测试数据">重置数据</a>
     </div>`;
   document.body.prepend(nav);
 }
@@ -65,11 +73,8 @@ function getQuery(key, def = '') {
   return new URLSearchParams(location.search).get(key) || def;
 }
 
-// ===== 新增：全站通用的图片生成函数 =====
-function getImgTag(id, extraClass = '') {
+// ===== 关键修改：这里去掉了 img/ =====
+function getImgBg(id) {
   const num = id.replace('f', '');
-  return `<img class="${extraClass}" 
-            src="assets/img/f (${num}).png" 
-            onerror="if(this.src.includes('.png')){this.src='assets/img/f (${num}).jpg'}else{this.style.opacity='0'}" 
-            alt="${id}">`;
+  return `url('assets/f (${num}).png')`;
 }
