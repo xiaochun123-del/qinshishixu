@@ -2,47 +2,186 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>时令地图 · 秦时时序</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>时令地图 · 秦时食序</title>
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-
 <section class="page">
   <a href="seasons.html" class="back-link">← 返回四时</a>
-
   <div class="page-head">
-    <h2>时令地图</h2>
-    <p>点击地图上的点位，发现该地的时令味道</p>
+    <h2 id="mapTitle">春 · 时令地图</h2>
+    <p>点击地图上的城市，查看该地的时令美食</p>
   </div>
 
   <div class="map-layout">
-    <div>
-      <div class="map-wrap">
-        <svg viewBox="0 0 400 640" preserveAspectRatio="xMidYMid meet">
-          <path class="map-outline" d="
-            M 250 40 L 300 60 L 320 120 L 300 200 L 290 300 L 310 360
-            L 300 430 L 280 470 L 230 500 L 170 520 L 120 480 L 80 430
-            L 70 380 L 60 320 L 80 270 L 60 220 L 100 160 L 150 120 L 180 60 Z" />
-        </svg>
+    <div class="map-panel">
+      <div class="season-tabs" id="seasonTabs"></div>
+      <div class="map-wrap" id="mapWrap"></div>
+      <div class="legend">
+        <span><i style="background:#7C5A3C"></i>关中</span>
+        <span><i style="background:#5F4931"></i>陕北</span>
+        <span><i style="background:#596344"></i>陕南</span>
       </div>
-
-      <div class="progress-bar"></div>
-
-      <!-- 进度下方显眼入口 -->
-      <a href="collection.html" class="map-cta">查看秦味集卡册 →</a>
     </div>
-
-    <aside class="detail-panel">
-      <div class="detail-empty">点击地图点位<br>查看时令美食</div>
-      <div class="detail-body"></div>
-    </aside>
+    <div>
+      <div class="page-head" style="text-align:left; margin-bottom:20px;">
+        <h3 id="cityTitle" style="color:var(--gold-l); font-size:24px;">陕西全域</h3>
+      </div>
+      <div class="map-list" id="dishList"></div>
+    </div>
   </div>
 </section>
 
+<div class="mask" id="mask"><div class="modal" id="modal"></div></div>
+
 <script src="js/data.js"></script>
 <script src="js/main.js"></script>
-<script src="js/map.js"></script>
-<script>initMapPage();</script>
+<script>
+renderNav('seasons');
+
+const urlSeason = getQuery('season', 'spring');
+let currentSeason = urlSeason;
+let currentCity = null;
+const SEASON_NAMES = { spring: '春', summer: '夏', autumn: '秋', winter: '冬' };
+
+function initMap() {
+  document.documentElement.setAttribute('data-season', currentSeason);
+  const tabs = $('#seasonTabs');
+  tabs.innerHTML = Object.entries(SEASON_NAMES).map(([k,v]) => 
+    `<button class="${k===currentSeason?'on':''}" onclick="changeSeason('${k}')">${v}季</button>`
+  ).join('');
+  renderSVG(); renderList();
+}
+
+function changeSeason(s) {
+  currentSeason = s;
+  document.documentElement.setAttribute('data-season', s);
+  $$('#seasonTabs button').forEach(b => b.classList.toggle('on', b.textContent === SEASON_NAMES[s]+'季'));
+  renderSVG(); renderList();
+}
+
+function renderSVG() {
+  const wrap = $('#mapWrap');
+  let svg = `<svg viewBox="0 0 ${SX_MAP.w} ${SX_MAP.h}" class="sxmap">`;
+  SX_MAP.cities.forEach(c => {
+    const sel = currentCity === c.name ? 'sel' : '';
+    svg += `<path class="mcity r-${CITY_REGION[c.name]} ${sel}" onclick="selectCity('${c.name}')" d="${c.d}"></path>`;
+  });
+  SX_MAP.cities.forEach(c => {
+    const sel = currentCity === c.name;
+    svg += `<text class="mlabel ${['铜川'].includes(c.name)?'small':''} ${sel?'light':''}" x="${c.cx}" y="${c.cy-12}">${c.name}</text>`;
+  });
+  svg += `</svg>`;
+  wrap.innerHTML = svg;
+  
+  $('#mapTitle').textContent = `${SEASON_NAMES[currentSeason]} · ${currentCity||'陕西'}美食地图`;
+  $('#cityTitle').textContent = currentCity || '陕西全域';
+}
+
+function selectCity(name) {
+  currentCity = (currentCity === name) ? null : name;
+  renderSVG(); renderList();
+}
+
+function renderList() {
+  const listEl = $('#dishList');
+  const unlocked = getUnlocked();
+  const st = getExtraState();
+  
+  let list = FOODS.filter(f => f.season === currentSeason);
+  if (currentCity) list = list.filter(f => f.city === currentCity);
+  
+  if (!list.length) {
+    listEl.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--ink-dim)">该区域暂无当季美食，换个城市或季节看看。</div>`;
+    return;
+  }
+
+  listEl.innerHTML = list.map(f => {
+    const isEaten = unlocked.includes(f.id);
+    const isWish = st.wish.includes(f.id);
+    const bgStyle = `background-image: url('assets/img/f (${f.id.replace('f','')}).png'), linear-gradient(135deg, var(--season-1), #1a1410);`;
+    
+    return `<div class="dish-card ${isEaten?'eaten':''}" onclick="openDishDetail('${f.id}')">
+      <div class="thumb" style="${bgStyle}">
+        ${isEaten?'<span class="badge-eaten">已吃 ✓</span>':''}
+      </div>
+      <div class="card-body">
+        <div class="dc-top"><h4>${f.name}</h4><span class="city">${f.city}</span></div>
+        <div class="dc-desc">${f.desc}</div>
+        <div class="dc-acts">
+          <button class="btn ${isEaten?'jade':'ghost'}" onclick="event.stopPropagation(); toggleEat('${f.id}')">${isEaten?'已打卡':'打卡'}</button>
+          <button class="btn ${isWish?'pri':'ghost'}" onclick="event.stopPropagation(); toggleWish('${f.id}')">${isWish?'已收藏':'收藏'}</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function openDishDetail(id) {
+  const f = FOODS.find(x => x.id === id);
+  if (!f) return;
+  const isEaten = getUnlocked().includes(id);
+  const isWish = getExtraState().wish.includes(id);
+  
+  const regionCulture = `${f.city}地处${f.region}，这里的${f.taste}风味孕育了${f.name}。`;
+  
+  // 丰富农产品描述：利用数据里的标签和食材信息，生成更详实的话术
+  let productText = "";
+  if (f.tags.includes('非遗') || f.tags.includes('传统')) {
+    productText = `选用当地优质农产品，承袭古法手工制作，保留了最地道的原生态风味。`;
+  } else if (f.tags.includes('面食') || f.name.includes('面')) {
+    productText = `采用关中优质冬小麦，配以当地特色佐料与食材，麦香浓郁，劲道十足。`;
+  } else if (f.tags.includes('羊肉') || f.name.includes('羊')) {
+    productText = `甄选陕北/关中散养优质羊肉，肉质鲜嫩不膻，搭配本地特产的香料慢火熬制。`;
+  } else {
+    productText = `结合当地特产（如${f.tags.join('、') || '特色食材'}）与优质原料，还原三秦大地的地道风味。`;
+  }
+
+  const num = f.id.replace('f', '');
+  const imgPath = `assets/img/f (${num}).png`;
+
+  $('#modal').innerHTML = `
+    <div class="mhead">
+      <button class="close" onclick="closeModal()">×</button>
+      <h3>${f.name}</h3>
+      <p style="color:var(--gold); font-size:13px; margin-top:5px;">${f.city} · ${f.region} · ${SEASON_NAMES[f.season]}季</p>
+    </div>
+    <div class="mbody">
+      <div style="height:180px; background-size:cover; background-position:center; border-radius:4px; margin-bottom:15px; background-image: url('${imgPath}'), linear-gradient(135deg, var(--season-1), #1a1410);"></div>
+      <p class="desc" style="font-size:16px; font-weight:bold; margin-bottom:10px; color:var(--ink);">${f.desc}</p>
+      <div style="font-size:13px; color:var(--ink-dim); line-height:1.8;">
+        <p><b style="color:var(--gold);">地域文化：</b>${regionCulture}</p>
+        <p><b style="color:var(--gold);">农产品结合：</b>${productText}</p>
+      </div>
+    </div>
+    <div class="mfoot">
+      <button class="btn ${isEaten?'jade':'pri'}" onclick="toggleEat('${f.id}', true)">${isEaten?'已点亮打卡 ✓':'点亮打卡'}</button>
+      <button class="btn ${isWish?'pri':'ghost'}" onclick="toggleWish('${f.id}', true)">${isWish?'已收藏 ♥':'收藏'}</button>
+    </div>
+  `;
+  $('#mask').classList.add('on');
+}
+
+function closeModal() { $('#mask').classList.remove('on'); }
+
+function toggleEat(id, isModal = false) {
+  let unlocked = getUnlocked();
+  if (unlocked.includes(id)) { unlocked = unlocked.filter(x => x !== id); toast('取消打卡'); }
+  else { unlocked.push(id); toast('点亮成功'); playDing(); }
+  saveUnlocked(unlocked);
+  let st = getExtraState(); st.wish = st.wish.filter(x=>x!==id); saveExtraState(st);
+  renderList(); if (isModal) openDishDetail(id); 
+}
+
+function toggleWish(id, isModal = false) {
+  let st = getExtraState();
+  if (st.wish.includes(id)) { st.wish = st.wish.filter(x=>x!==id); toast('取消收藏'); }
+  else { st.wish.push(id); toast('已加入探索坊收藏'); playDing(); }
+  saveExtraState(st); renderList(); if (isModal) openDishDetail(id);
+}
+
+initMap();
+</script>
 </body>
 </html>

@@ -2,59 +2,115 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>集卡册 · 秦时时序</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>集卡册 · 秦时食序</title>
 <link rel="stylesheet" href="css/style.css">
+<style>
+  /* 集卡册卡片图片样式 */
+  .gcard .thumb { position: relative; height: 100px; background: #1a1410; border-radius: 2px; margin-bottom: 10px; overflow: hidden; }
+  .gcard .thumb img { width: 100%; height: 100%; object-fit: cover; transition: filter .3s; }
+  
+  /* 未点亮：黑白+变暗 */
+  .gcard:not(.got) .thumb img { filter: grayscale(1) brightness(0.4); }
+  /* 点亮：正常彩色 */
+  .gcard.got .thumb img { filter: none; }
+</style>
 </head>
 <body>
-
 <section class="page">
   <a href="seasons.html" class="back-link">← 返回四时</a>
+  <div class="page-head"><h2>秦味集卡册</h2><p>点亮属于你的三秦味道</p></div>
 
-  <div class="page-head">
-    <h2>秦味集卡册</h2>
-    <p>点亮属于你的三秦味道</p>
+  <div class="collect-top">
+    <div class="ring" id="ring"><div><b id="ringPct">0%</b><small>收集进度</small></div></div>
+    <div class="cstats">
+      <div class="cstat"><b id="stEaten">0</b><span>已吃美食</span></div>
+      <div class="cstat"><b id="stLeft">0</b><span>待解锁</span></div>
+      <div class="cstat"><b id="stCity">0</b><span>打卡城市</span></div>
+    </div>
   </div>
 
-  <div class="collect-summary" id="summary"></div>
-  <div class="collection-grid" id="grid"></div>
+  <div id="groups"></div>
 
-  <!-- 底部引导：下一步去哪 -->
-  <div class="page-cta">
+  <div class="season-extra" style="margin-top:50px;">
     <a href="mbti.html" class="cta-btn">测测你的美食人格 →</a>
-    <a href="seasons.html" class="cta-btn ghost">← 返回四时</a>
+    <a href="extra.html" class="cta-btn ghost">去探索坊（收藏/留念）</a>
   </div>
 </section>
-
 <script src="js/data.js"></script>
 <script src="js/main.js"></script>
 <script>
-renderNav("collection");
-const unlocked = getUnlocked();
-const grid = document.getElementById("grid");
-const summary = document.getElementById("summary");
+renderNav('collection');
+const TYPES = ['面食', '馍饼', '凉皮米皮', '汤羹炖菜', '腊味荤食', '甜品甜心'];
 
-const total = FOODS.length;
-const done = FOODS.filter(f => unlocked.includes(f.id)).length;
-summary.innerHTML = `<div class="big">${done}<small> / ${total}</small></div>
-  <p style="color:var(--ink-dim);font-size:13px;letter-spacing:.2em;margin-top:8px">
-  ${done === total ? '全部点亮，你是真正的秦味收藏家' : '继续探索，点亮更多味道'}
-  </p>`;
+function renderCards() {
+  const unlocked = getUnlocked();
+  const total = FOODS.length;
+  const eaten = unlocked.length;
+  const cities = new Set(FOODS.filter(f => unlocked.includes(f.id)).map(f => f.city)).size;
+  const pct = Math.round(eaten / total * 100);
 
-FOODS.forEach(f => {
-  const isDone = unlocked.includes(f.id);
-  const card = document.createElement("a");
-  card.href = `map.html?season=${f.season}`;
-  card.className = "collect-card" + (isDone ? " unlocked" : "");
-  card.innerHTML = `
-    <div class="thumb" style="background-image:url('${f.img}')"></div>
-    <div class="meta">
-      <h4>${isDone ? f.name : '未点亮'}</h4>
-      <span>${SEASONS[f.season].cn} · ${f.city}</span>
+  $('#ring').style.setProperty('--p', (pct * 3.6) + 'deg');
+  $('#ringPct').textContent = pct + '%';
+  $('#stEaten').textContent = eaten;
+  $('#stLeft').textContent = total - eaten;
+  $('#stCity').textContent = cities;
+
+  const groups = $('#groups');
+  groups.innerHTML = TYPES.map(t => {
+    const list = FOODS.filter(f => f.type === t);
+    const got = list.filter(f => unlocked.includes(f.id)).length;
+    const p = Math.round(got / list.length * 100);
+    return `<div class="cgroup">
+      <div class="cgroup-head">
+        <h3>${t}</h3>
+        <div class="bar"><i style="width:${p}%"></i></div>
+        <span class="n">${got} / ${list.length}</span>
+      </div>
+      <div class="cardgrid">
+        ${list.map(f => {
+          const isGot = unlocked.includes(f.id);
+          // 调用 main.js 里的 getImgTag
+          return `<div class="gcard ${isGot?'got':''}" onclick="openDish('${f.id}')">
+            <div class="thumb">${getImgTag(f.id)}</div>
+            <div class="cn">${isGot ? f.name : '未点亮'}</div>
+            <div class="cc">${f.city} · ${f.taste}</div>
+            <span class="tk" style="z-index:2;">${isGot?'✓':'+'}</span>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function openDish(id) {
+  const f = FOODS.find(x => x.id === id);
+  if (!f) return;
+  const isGot = getUnlocked().includes(id);
+  $('#modal').innerHTML = `
+    <div class="mhead">
+      <button class="close" onclick="closeModal()">×</button>
+      <h3>${f.name}</h3>
     </div>
-    <div class="lock">${isDone ? '已集' : '待点亮'}</div>`;
-  grid.appendChild(card);
-});
+    <div class="mbody"><p class="desc">${f.desc}</p></div>
+    <div class="mfoot">
+      <button class="btn ${isGot?'jade':'pri'}" onclick="toggleEat('${f.id}')">${isGot ? '已点亮 ✓' : '点亮打卡'}</button>
+    </div>`;
+  $('#mask').classList.add('on');
+}
+
+function closeModal() { $('#mask').classList.remove('on'); }
+
+function toggleEat(id) {
+  let unlocked = getUnlocked();
+  if (unlocked.includes(id)) { unlocked = unlocked.filter(x => x !== id); toast('取消点亮'); }
+  else { unlocked.push(id); toast('点亮成功'); playDing(); }
+  saveUnlocked(unlocked);
+  renderCards();
+  closeModal();
+}
+
+renderCards();
 </script>
 </body>
 </html>

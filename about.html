@@ -1,0 +1,81 @@
+<<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>关于 · 秦时食序</title>
+<link rel="stylesheet" href="css/style.css">
+<style>
+  /* ====== 核心：加大、提亮上方介绍文字 ====== */
+  .about-desc {
+    max-width: 780px;
+    margin: 0 auto 40px;
+    font-size: 17px;       /* 字体加大 */
+    color: #FFEAC2;        /* 换成亮米黄色，更突出 */
+    line-height: 2.2;      /* 增加行高，呼吸感更强 */
+    letter-spacing: 0.05em;
+    text-shadow: 0 2px 10px rgba(0,0,0,1), 0 4px 20px rgba(0,0,0,0.8); /* 增加强投影，防止融进背景 */
+  }
+  .about-desc p {
+    margin-bottom: 16px;
+  }
+
+  /* ====== 下方信息框稍微排版优化 ====== */
+  .info-list {
+    max-width: 600px;
+    margin: 0 auto;
+    text-align: left;
+    line-height: 2.2;
+    font-size: 14px;
+    color: var(--ink-dim);
+    padding: 30px;
+    background: rgba(34, 26, 19, 0.75); /* 稍微加深背景，让表格更清晰 */
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  }
+  .info-list p {
+    margin: 0;
+    display: flex;
+  }
+  .info-list b {
+    width: 120px;
+    color: var(--gold-l);
+    font-weight: normal;
+    flex-shrink: 0;
+  }
+</style>
+</head>
+<body>
+<section class="page">
+  <a href="index.html" class="back-link">← 返回首页</a>
+  
+  <div class="about-wrap">
+    <h1 style="text-shadow: 0 4px 15px rgba(0,0,0,1); margin-bottom: 30px;">关于秦时食序</h1>
+    
+    <!-- 重点突出这一块介绍 -->
+    <div class="about-desc">
+      <p>「秦时食序」是一个以二十四节气为时间线，以陕西美食为线索的交互式网页设计项目。</p>
+      <p>我们从关中、陕北、陕南三大地域出发，沿着春夏秋冬的更迭，带你在地图上寻找时令美食，点亮专属的秦味集卡册。</p>
+      <p>通过八道题的美食人格测试，我们希望能帮你找到性格里最契合的那一味陕西。也欢迎你在探索坊里，记录下属于你的美食留念。</p>
+    </div>
+    
+    <!-- 下方信息框 -->
+    <div class="info-list">
+      <p><b>项目名称：</b> 秦时食序 · 循四时之序，品三秦之味</p>
+      <p><b>团队名称：</b> 专业团队</p>
+      <p><b>团队成员：</b> 李孟钰雯、王笑冉、张哲明</p>
+      <p style="margin-top: 15px;"><b>前端技术：</b> HTML5 / CSS3 / JavaScript</p>
+      <p><b>项目展示：</b> GitHub Pages 在线预览与源码托管</p>
+      <p><b>数据来源：</b> 陕西地方饮食文化资料整理</p>
+    </div>
+    
+    <p style="margin-top: 40px; color: var(--gold); letter-spacing: 0.2em; text-shadow: 0 2px 5px rgba(0,0,0,0.8);">感谢你的探索与体验。</p>
+    <a href="seasons.html" class="cta-btn" style="margin-top: 20px;">再次启程 →</a>
+  </div>
+</section>
+<script src="js/main.js"></script>
+<script>renderNav('about');</script>
+</body>
+</html>

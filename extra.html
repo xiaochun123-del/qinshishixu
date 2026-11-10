@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>探索坊 · 秦时食序</title>
+<link rel="stylesheet" href="css/style.css">
+<style>
+  /* 补充探索坊卡片图片样式 */
+  .dish-card .thumb { position: relative; height: 140px; background: #1a1410; overflow: hidden; border-bottom: 1px solid var(--line); }
+  .dish-card .thumb img { width: 100%; height: 100%; object-fit: cover; }
+</style>
+</head>
+<body>
+<section class="page">
+  <a href="seasons.html" class="back-link">← 返回四时</a>
+  <div class="page-head">
+    <h2>探索坊</h2>
+    <p>收藏你的心动美食，记录你的专属记忆</p>
+  </div>
+
+  <div class="tabs">
+    <button class="on" onclick="switchTab('wish')">想吃清单（收藏）</button>
+    <button onclick="switchTab('mix')">自选搭配</button>
+    <button onclick="switchTab('memo')">美食留念</button>
+  </div>
+
+  <div class="tab-content on" id="tab-wish">
+    <div class="map-list" id="wishList"></div>
+  </div>
+
+  <div class="tab-content" id="tab-mix">
+    <div class="mix-row"><div class="lbl">区域</div><div class="mix-chips" id="mixRegion"></div></div>
+    <div class="mix-row"><div class="lbl">口味</div><div class="mix-chips" id="mixTaste"></div></div>
+    <div class="mix-row"><div class="lbl">类型</div><div class="mix-chips" id="mixType"></div></div>
+    <div style="text-align:center; margin:30px 0; color:var(--gold); font-size:16px;" id="mixCount"></div>
+    <div class="map-list" id="mixResult"></div>
+  </div>
+
+  <div class="tab-content" id="tab-memo">
+    <div class="memo-wrap">
+      <div class="memo-form">
+        <h3 style="color:var(--gold); margin-bottom:15px;">写一条留念</h3>
+        <div class="field"><label>标题</label><input type="text" id="memoTitle" placeholder="比如：第一次吃泡馍"></div>
+        <div class="field"><label>心得</label><textarea id="memoNote" placeholder="味道怎么样，和谁一起……"></textarea></div>
+        <div class="field">
+          <label>照片</label>
+          <div class="upload-box" onclick="document.getElementById('memoFile').click()">点击选择照片（自动压缩）</div>
+          <input type="file" id="memoFile" accept="image/*" style="display:none" onchange="handleImg(event)">
+          <div id="memoThumb" style="margin-top:10px;"></div>
+        </div>
+        <button class="btn pri" style="width:100%; padding:10px;" onclick="saveMemo()">保存留念</button>
+      </div>
+      <div class="memo-grid" id="memoGrid"></div>
+    </div>
+  </div>
+</section>
+
+<div class="mask" id="mask"><div class="modal" id="modal"></div></div>
+
+<script src="js/data.js"></script>
+<script src="js/main.js"></script>
+<script src="js/extra.js"></script>
+</body>
+</html>

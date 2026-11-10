@@ -2,29 +2,106 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>四时 · 秦时时序</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>四时 · 秦时食序</title>
 <link rel="stylesheet" href="css/style.css">
+<style>
+  /* 绝对不加任何遮罩 */
+  .card-mask { display: none !important; }
+  .card-content { position: relative; z-index: 2; }
+
+  /* 春夏秋冬：亮金色 + 单层柔和黑底影（绝对不会有黑块） */
+  .season-card .cn { 
+    color: #FFEAC2 !important; /* 极亮的金色 */
+    font-weight: bold !important;
+    /* 只用普通的 text-shadow，向下和四周微微散开 */
+    text-shadow: 0px 2px 5px rgba(0, 0, 0, 0.9), 0px 4px 10px rgba(0, 0, 0, 0.6) !important;
+  }
+  
+  /* 英文：浅金色 */
+  .season-card .en { 
+    color: #E8C98F !important;
+    font-weight: 600 !important;
+    text-shadow: 0px 1px 4px rgba(0, 0, 0, 0.9) !important;
+  }
+  
+  /* 节气：偏白一点 */
+  .season-card .term { 
+    color: #FFFFFF !important; 
+    font-weight: 500 !important;
+    text-shadow: 0px 1px 4px rgba(0, 0, 0, 0.9) !important;
+  }
+  
+  /* 描述文字：纯白色，加极深的投影，保证在浅色草地上也能看清 */
+  .season-card .desc { 
+    color: #FFFFFF !important; 
+    font-weight: 500 !important;
+    text-shadow: 0px 1px 5px rgba(0, 0, 0, 1), 0px 2px 8px rgba(0, 0, 0, 0.8) !important;
+  }
+  
+  /* 底部按钮文字 */
+  .season-card .go {
+    color: #FFEAC2 !important;
+    font-weight: bold !important;
+    text-shadow: 0px 1px 4px rgba(0, 0, 0, 0.9) !important;
+  }
+</style>
 </head>
 <body>
-
 <section class="seasons" data-active="spring">
+  
+  <div class="seasons-bg">
+    <div class="bg-item bg-spring" style="background-image: url('assets/img/seasons (1).png');"></div>
+    <div class="bg-item bg-summer" style="background-image: url('assets/img/seasons (2).png');"></div>
+    <div class="bg-item bg-autumn" style="background-image: url('assets/img/seasons (3).png');"></div>
+    <div class="bg-item bg-winter" style="background-image: url('assets/img/seasons (4).png');"></div>
+  </div>
+
   <div class="seasons-inner">
     <h2>四时之序</h2>
     <p class="lead">春生 · 夏长 · 秋收 · 冬藏</p>
-
-    <div class="season-grid"></div>
-
-    <!-- 底部显眼入口 -->
+    
+    <div class="season-grid">
+      <a href="map.html?season=spring" class="season-card" style="--sc:#7ba05b; background-image: url('assets/img/seasons (1).png');" onmouseenter="document.querySelector('.seasons').dataset.active='spring'">
+        <div class="card-mask"></div>
+        <div class="card-content">
+          <div class="cn">春</div><div class="en">SPRING</div><div class="term">立春 · 春分</div>
+          <div class="desc">春食鲜，草木初生，尝一口山野清气。</div><div class="go">进入春时令地图 →</div>
+        </div>
+      </a>
+      <a href="map.html?season=summer" class="season-card" style="--sc:#2d8b9e; background-image: url('assets/img/seasons (2).png');" onmouseenter="document.querySelector('.seasons').dataset.active='summer'">
+        <div class="card-mask"></div>
+        <div class="card-content">
+          <div class="cn">夏</div><div class="en">SUMMER</div><div class="term">立夏 · 夏至</div>
+          <div class="desc">夏食凉，暑气蒸腾，一碗浆水解千愁。</div><div class="go">进入夏时令地图 →</div>
+        </div>
+      </a>
+      <a href="map.html?season=autumn" class="season-card" style="--sc:#c47a2b; background-image: url('assets/img/seasons (3).png');" onmouseenter="document.querySelector('.seasons').dataset.active='autumn'">
+        <div class="card-mask"></div>
+        <div class="card-content">
+          <div class="cn">秋</div><div class="en">AUTUMN</div><div class="term">立秋 · 秋分</div>
+          <div class="desc">秋食丰，瓜果满枝，秦地最是丰饶时。</div><div class="go">进入秋时令地图 →</div>
+        </div>
+      </a>
+      <a href="map.html?season=winter" class="season-card" style="--sc:#4a5d7e; background-image: url('assets/img/seasons (4).png');" onmouseenter="document.querySelector('.seasons').dataset.active='winter'">
+        <div class="card-mask"></div>
+        <div class="card-content">
+          <div class="cn">冬</div><div class="en">WINTER</div><div class="term">立冬 · 冬至</div>
+          <div class="desc">冬食暖，炉火正旺，一碗热汤慰风尘。</div><div class="go">进入冬时令地图 →</div>
+        </div>
+      </a>
+    </div>
+    
     <div class="season-extra">
-      <a href="collection.html" class="cta-btn">秦味集卡册 →</a>
-      <a href="mbti.html" class="cta-btn ghost">测测你的美食人格</a>
+      <a href="collection.html" class="cta-btn">秦味集卡册</a>
+      <a href="mbti.html" class="cta-btn">测测美食人格</a>
+      <a href="extra.html" class="cta-btn">进入探索坊</a>
+      <a href="about.html" class="cta-btn">关于项目</a>
     </div>
   </div>
 </section>
-
 <script src="js/data.js"></script>
 <script src="js/main.js"></script>
-<script>initSeasonsPage();</script>
+<script>renderNav('seasons');</script>
 </body>
 </html>
