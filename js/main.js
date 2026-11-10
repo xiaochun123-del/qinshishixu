@@ -20,15 +20,6 @@ function savePersona(code) {
   if (!arr.includes(code)) { arr.push(code); localStorage.setItem(PERSONA_KEY, JSON.stringify(arr)); }
 }
 
-function resetAllData() {
-  if (confirm("确定要清除所有打卡、收藏和测试记录吗？")) {
-    localStorage.removeItem(STORAGE_KEY);
-    localStorage.removeItem(EXTRA_KEY);
-    localStorage.removeItem(PERSONA_KEY);
-    location.reload();
-  }
-}
-
 function toast(msg) {
   let t = $('#toast');
   if (!t) { t = document.createElement('div'); t.id = 'toast'; t.className = 'toast'; document.body.appendChild(t); }
@@ -64,7 +55,6 @@ function renderNav(active) {
       <a href="mbti.html" class="${active==='mbti'?'active':''}">美食人格</a>
       <a href="extra.html" class="${active==='extra'?'active':''}">探索坊</a>
       <a href="about.html" class="${active==='about'?'active':''}">关于</a>
-      <a href="javascript:void(0)" onclick="resetAllData()" style="color:#C14E31; font-size:12px; border:1px solid #C14E31; padding:2px 8px; border-radius:2px; margin-left:10px;" title="清除测试数据">重置数据</a>
     </div>`;
   document.body.prepend(nav);
 }
@@ -73,7 +63,7 @@ function getQuery(key, def = '') {
   return new URLSearchParams(location.search).get(key) || def;
 }
 
-// ===== 关键修改：这里去掉了 img/ =====
+// 完全贴合你现在的文件名
 function getImgBg(id) {
   const num = id.replace('f', '');
   return `url('assets/f (${num}).png')`;
