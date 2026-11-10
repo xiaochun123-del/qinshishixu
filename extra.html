@@ -5,19 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>探索坊 · 秦时食序</title>
 <link rel="stylesheet" href="css/style.css">
-<style>
-  /* 补充探索坊卡片图片样式 */
-  .dish-card .thumb { position: relative; height: 140px; background: #1a1410; overflow: hidden; border-bottom: 1px solid var(--line); }
-  .dish-card .thumb img { width: 100%; height: 100%; object-fit: cover; }
-</style>
 </head>
 <body>
 <section class="page">
   <a href="seasons.html" class="back-link">← 返回四时</a>
-  <div class="page-head">
-    <h2>探索坊</h2>
-    <p>收藏你的心动美食，记录你的专属记忆</p>
-  </div>
+  <div class="page-head"><h2>探索坊</h2><p>收藏你的心动美食，记录你的专属记忆</p></div>
 
   <div class="tabs">
     <button class="on" onclick="switchTab('wish')">想吃清单（收藏）</button>
@@ -25,9 +17,7 @@
     <button onclick="switchTab('memo')">美食留念</button>
   </div>
 
-  <div class="tab-content on" id="tab-wish">
-    <div class="map-list" id="wishList"></div>
-  </div>
+  <div class="tab-content on" id="tab-wish"><div class="map-list" id="wishList"></div></div>
 
   <div class="tab-content" id="tab-mix">
     <div class="mix-row"><div class="lbl">区域</div><div class="mix-chips" id="mixRegion"></div></div>
@@ -45,7 +35,7 @@
         <div class="field"><label>心得</label><textarea id="memoNote" placeholder="味道怎么样，和谁一起……"></textarea></div>
         <div class="field">
           <label>照片</label>
-          <div class="upload-box" onclick="document.getElementById('memoFile').click()">点击选择照片（自动压缩）</div>
+          <div class="upload-box" onclick="document.getElementById('memoFile').click()">点击选择照片</div>
           <input type="file" id="memoFile" accept="image/*" style="display:none" onchange="handleImg(event)">
           <div id="memoThumb" style="margin-top:10px;"></div>
         </div>
@@ -55,9 +45,7 @@
     </div>
   </div>
 </section>
-
 <div class="mask" id="mask"><div class="modal" id="modal"></div></div>
-
 <script src="js/data.js"></script>
 <script src="js/main.js"></script>
 <script src="js/extra.js"></script>

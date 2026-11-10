@@ -100,7 +100,7 @@ function renderList() {
   listEl.innerHTML = list.map(f => {
     const isEaten = unlocked.includes(f.id);
     const isWish = st.wish.includes(f.id);
-    const bgStyle = `background-image: url('assets/img/f (${f.id.replace('f','')}).png'), linear-gradient(135deg, var(--season-1), #1a1410);`;
+    const bgStyle = `background-image: ${getImgBg(f.id)}, linear-gradient(135deg, var(--season-1), #1a1410);`;
     
     return `<div class="dish-card ${isEaten?'eaten':''}" onclick="openDishDetail('${f.id}')">
       <div class="thumb" style="${bgStyle}">
@@ -125,21 +125,8 @@ function openDishDetail(id) {
   const isWish = getExtraState().wish.includes(id);
   
   const regionCulture = `${f.city}地处${f.region}，这里的${f.taste}风味孕育了${f.name}。`;
-  
-  // 丰富农产品描述：利用数据里的标签和食材信息，生成更详实的话术
-  let productText = "";
-  if (f.tags.includes('非遗') || f.tags.includes('传统')) {
-    productText = `选用当地优质农产品，承袭古法手工制作，保留了最地道的原生态风味。`;
-  } else if (f.tags.includes('面食') || f.name.includes('面')) {
-    productText = `采用关中优质冬小麦，配以当地特色佐料与食材，麦香浓郁，劲道十足。`;
-  } else if (f.tags.includes('羊肉') || f.name.includes('羊')) {
-    productText = `甄选陕北/关中散养优质羊肉，肉质鲜嫩不膻，搭配本地特产的香料慢火熬制。`;
-  } else {
-    productText = `结合当地特产（如${f.tags.join('、') || '特色食材'}）与优质原料，还原三秦大地的地道风味。`;
-  }
-
-  const num = f.id.replace('f', '');
-  const imgPath = `assets/img/f (${num}).png`;
+  const farmProduct = f.tags.length ? f.tags.join('、') : '当地特色农产品';
+  const bgStyle = `background-image: ${getImgBg(f.id)}, linear-gradient(135deg, var(--season-1), #1a1410);`;
 
   $('#modal').innerHTML = `
     <div class="mhead">
@@ -148,11 +135,11 @@ function openDishDetail(id) {
       <p style="color:var(--gold); font-size:13px; margin-top:5px;">${f.city} · ${f.region} · ${SEASON_NAMES[f.season]}季</p>
     </div>
     <div class="mbody">
-      <div style="height:180px; background-size:cover; background-position:center; border-radius:4px; margin-bottom:15px; background-image: url('${imgPath}'), linear-gradient(135deg, var(--season-1), #1a1410);"></div>
+      <div style="height:180px; background-size:cover; background-position:center; border-radius:4px; margin-bottom:15px; ${bgStyle}"></div>
       <p class="desc" style="font-size:16px; font-weight:bold; margin-bottom:10px; color:var(--ink);">${f.desc}</p>
       <div style="font-size:13px; color:var(--ink-dim); line-height:1.8;">
         <p><b style="color:var(--gold);">地域文化：</b>${regionCulture}</p>
-        <p><b style="color:var(--gold);">农产品结合：</b>${productText}</p>
+        <p><b style="color:var(--gold);">农产品结合：</b>${farmProduct}</p>
       </div>
     </div>
     <div class="mfoot">

@@ -4,26 +4,62 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>秦时食序 · 循四时之序，品三秦之味</title>
-<link rel="stylesheet" href="css/style.css">
+<style>
+  /* 把首页所有样式独立写死在这里，绝对不受外部 css 影响 */
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { margin: 0; padding: 0; font-family: "Songti SC", "STSong", "SimSun", serif; background-color: #0b0908; overflow: hidden; }
+  
+  .hero {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    /* 这里使用的是你的 cover 图，如果你本地叫 cover.png.png，请在下面改一下 */
+    background: linear-gradient(rgba(14,12,10,0.6), rgba(14,12,10,0.8)), url('assets/img/cover.png') center/cover no-repeat;
+    background-color: #0e0c0a;
+  }
+
+  .hero-inner { position: relative; z-index: 3; }
+  
+  .kicker { font-size: 14px; letter-spacing: .6em; color: #C9A15A; margin-bottom: 20px; }
+  .hero h1 { font-size: clamp(48px, 9vw, 120px); letter-spacing: .2em; color: #F2ECE0; margin-bottom: 20px; text-shadow: 0 4px 40px rgba(0,0,0,1); }
+  .hero .sub { font-size: clamp(14px, 2vw, 18px); letter-spacing: .3em; color: #EDE0CC; margin-bottom: 20px; text-shadow: 0 2px 10px rgba(0,0,0,0.8); }
+  .hero .desc { font-size: 14px; color: #C4B29A; letter-spacing: .2em; margin-bottom: 50px; text-shadow: 0 2px 5px rgba(0,0,0,0.8); }
+  
+  .hero .cta { 
+    display: inline-block; padding: 16px 46px; border: 1px solid #C9A15A; color: #C9A15A; 
+    letter-spacing: .35em; font-size: 15px; text-decoration: none; transition: all 0.3s; 
+    background: rgba(14,12,10,0.5); backdrop-filter: blur(5px);
+  }
+  .hero .cta:hover { background: #C9A15A; color: #14100c; }
+  
+  .about-link { position: absolute; bottom: 30px; right: 40px; font-size: 12px; letter-spacing: 0.2em; color: #C9A15A; text-decoration: underline; opacity: 0.7; z-index: 10; }
+</style>
 </head>
 <body>
-<!-- 注意这里：图片名是 cover.png.png -->
-<section class="hero" style="background: linear-gradient(rgba(14,12,10,0.5), rgba(14,12,10,0.8)), url('assets/cover.png.png') center/cover no-repeat;">
-  
+
+<section class="hero">
+  <!-- 粒子特效层 -->
   <canvas id="particles" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:2;"></canvas>
   
   <div class="hero-inner">
     <div class="kicker">SHAANXI · SEASONS · FOOD</div>
     <h1>秦时食序</h1>
-    <p class="sub" style="margin-bottom: 15px;">循四时之序　品三秦之味</p>
-    <p style="color: var(--ink); font-size: 14px; letter-spacing: 0.2em; margin-bottom: 54px; opacity: 0; animation: fadeUp 1s 1s forwards; text-shadow: 0 2px 5px rgba(0,0,0,0.8);">以二十四节气为序，寻访三秦大地的时令风味。</p>
+    <p class="sub">循四时之序　品三秦之味</p>
+    <p class="desc">以二十四节气为序，寻访三秦大地的时令风味。</p>
     <a href="seasons.html" class="cta">启程 · 循味四时</a>
   </div>
 
   <a href="about.html" class="about-link">ABOUT 项目说明 →</a>
 </section>
+
 <script src="js/data.js"></script>
 <script>
+// 粒子特效
 (function () {
   const canvas = document.getElementById("particles"); if (!canvas) return;
   const ctx = canvas.getContext("2d"); const DPR = Math.min(window.devicePixelRatio || 1, 2);

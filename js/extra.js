@@ -8,7 +8,6 @@ function switchTab(name) {
   if (name === 'memo') renderMemo();
 }
 
-// ======= 想吃清单 =======
 function renderWish() {
   const st = getExtraState();
   const list = FOODS.filter(f => st.wish.includes(f.id));
@@ -17,9 +16,11 @@ function renderWish() {
     el.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--ink-dim)">还没有收藏的美食，去地图上点点“收藏”吧</div>`;
     return;
   }
-  el.innerHTML = list.map(f => `
+  el.innerHTML = list.map(f => {
+    const bgStyle = `background-image: ${getImgBg(f.id)};`;
+    return `
     <div class="dish-card">
-      <div class="thumb">${getImgTag(f.id)}</div>
+      <div class="thumb" style="${bgStyle}"></div>
       <div class="card-body">
         <div class="dc-top"><h4>${f.name}</h4><span class="city">${f.city}</span></div>
         <div class="dc-desc">${f.desc}</div>
@@ -29,7 +30,7 @@ function renderWish() {
         </div>
       </div>
     </div>
-  `).join('');
+  `}).join('');
 }
 
 function markEat(id) {
@@ -44,7 +45,6 @@ function delWish(id) {
   renderWish();
 }
 
-// ======= 自选搭配 =======
 let mix = { region: '', taste: '', type: '' };
 const TASTES = ['香辣', '咸鲜醇厚', '清淡鲜爽', '香甜软糯'];
 const TYPES = ['面食', '馍饼', '凉皮米皮', '汤羹炖菜', '腊味荤食', '甜品甜心'];
@@ -63,9 +63,12 @@ function renderMix() {
   );
   
   $('#mixCount').textContent = `找到 ${list.length} 道符合条件的陕西美食`;
-  $('#mixResult').innerHTML = list.map(f => `
+  
+  $('#mixResult').innerHTML = list.map(f => {
+    const bgStyle = `background-image: ${getImgBg(f.id)};`;
+    return `
     <div class="dish-card">
-      <div class="thumb">${getImgTag(f.id)}</div>
+      <div class="thumb" style="${bgStyle}"></div>
       <div class="card-body">
         <div class="dc-top"><h4>${f.name}</h4><span class="city">${f.city}</span></div>
         <div class="dc-desc">${f.desc}</div>
@@ -74,7 +77,7 @@ function renderMix() {
         </div>
       </div>
     </div>
-  `).join('');
+  `}).join('');
 }
 function setMix(k, v) { mix[k] = v; renderMix(); }
 
@@ -85,7 +88,6 @@ function toggleWish(id) {
   saveExtraState(st); renderMix();
 }
 
-// ======= 留念区 =======
 let pendingImg = '';
 function renderMemo() {
   const st = getExtraState();

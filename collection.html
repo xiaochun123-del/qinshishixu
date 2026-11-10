@@ -5,16 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>集卡册 · 秦时食序</title>
 <link rel="stylesheet" href="css/style.css">
-<style>
-  /* 集卡册卡片图片样式 */
-  .gcard .thumb { position: relative; height: 100px; background: #1a1410; border-radius: 2px; margin-bottom: 10px; overflow: hidden; }
-  .gcard .thumb img { width: 100%; height: 100%; object-fit: cover; transition: filter .3s; }
-  
-  /* 未点亮：黑白+变暗 */
-  .gcard:not(.got) .thumb img { filter: grayscale(1) brightness(0.4); }
-  /* 点亮：正常彩色 */
-  .gcard.got .thumb img { filter: none; }
-</style>
 </head>
 <body>
 <section class="page">
@@ -34,7 +24,7 @@
 
   <div class="season-extra" style="margin-top:50px;">
     <a href="mbti.html" class="cta-btn">测测你的美食人格 →</a>
-    <a href="extra.html" class="cta-btn ghost">去探索坊（收藏/留念）</a>
+    <a href="extra.html" class="cta-btn">去探索坊（收藏/留念）</a>
   </div>
 </section>
 <script src="js/data.js"></script>
@@ -61,6 +51,7 @@ function renderCards() {
     const list = FOODS.filter(f => f.type === t);
     const got = list.filter(f => unlocked.includes(f.id)).length;
     const p = Math.round(got / list.length * 100);
+    
     return `<div class="cgroup">
       <div class="cgroup-head">
         <h3>${t}</h3>
@@ -70,9 +61,9 @@ function renderCards() {
       <div class="cardgrid">
         ${list.map(f => {
           const isGot = unlocked.includes(f.id);
-          // 调用 main.js 里的 getImgTag
+          const bgStyle = `background-image: ${getImgBg(f.id)};`;
           return `<div class="gcard ${isGot?'got':''}" onclick="openDish('${f.id}')">
-            <div class="thumb">${getImgTag(f.id)}</div>
+            <div class="thumb" style="${bgStyle}"></div>
             <div class="cn">${isGot ? f.name : '未点亮'}</div>
             <div class="cc">${f.city} · ${f.taste}</div>
             <span class="tk" style="z-index:2;">${isGot?'✓':'+'}</span>
@@ -88,17 +79,11 @@ function openDish(id) {
   if (!f) return;
   const isGot = getUnlocked().includes(id);
   $('#modal').innerHTML = `
-    <div class="mhead">
-      <button class="close" onclick="closeModal()">×</button>
-      <h3>${f.name}</h3>
-    </div>
+    <div class="mhead"><button class="close" onclick="closeModal()">×</button><h3>${f.name}</h3></div>
     <div class="mbody"><p class="desc">${f.desc}</p></div>
-    <div class="mfoot">
-      <button class="btn ${isGot?'jade':'pri'}" onclick="toggleEat('${f.id}')">${isGot ? '已点亮 ✓' : '点亮打卡'}</button>
-    </div>`;
+    <div class="mfoot"><button class="btn ${isGot?'jade':'pri'}" onclick="toggleEat('${f.id}')">${isGot ? '已点亮 ✓' : '点亮打卡'}</button></div>`;
   $('#mask').classList.add('on');
 }
-
 function closeModal() { $('#mask').classList.remove('on'); }
 
 function toggleEat(id) {
@@ -109,7 +94,6 @@ function toggleEat(id) {
   renderCards();
   closeModal();
 }
-
 renderCards();
 </script>
 </body>

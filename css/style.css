@@ -22,15 +22,13 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
 
-/* ========== 核心：加入生成图作为全屏背景 ========== */
+/* ========== 核心：背景图 ========== */
 body {
   font-family: "Songti SC", "STSong", "SimSun", "Noto Serif SC", serif;
   color: var(--ink); min-height: 100vh; overflow-x: hidden;
   -webkit-font-smoothing: antialiased; line-height: 1.65;
-  
-  /* 这里使用 bg-texture.png */
   background-color: #0b0908;
-  background-image: url('../assets/bg-texture.png');
+  background-image: url('../assets/img/bg-texture.png');
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
@@ -58,10 +56,8 @@ img { max-width: 100%; display: block; }
 .nav .links a.active { color: var(--gold-l); }
 .nav .links a.active::after { content: ""; position: absolute; left: 0; right: 0; bottom: -6px; height: 2px; background: var(--gold); }
 
-/* ========== 通用容器与按钮 ========== */
-.page { 
-  min-height: 100vh; padding: 100px 6vw 80px; max-width: 1300px; margin: 0 auto; 
-}
+/* ========== 通用容器 ========== */
+.page { min-height: 100vh; padding: 100px 6vw 80px; max-width: 1300px; margin: 0 auto; }
 .page-head { text-align: center; margin-bottom: 40px; }
 .page-head h2 { font-size: clamp(26px, 4vw, 40px); letter-spacing: .3em; color: var(--gold-l); margin-bottom: 10px; }
 .page-head p { color: var(--ink-dim); letter-spacing: .15em; font-size: 14px; }
@@ -82,24 +78,7 @@ img { max-width: 100%; display: block; }
 .btn.pri:hover { background: #A33325; border-color: #A33325; color: #fff; }
 .btn.jade { background: var(--jade); border-color: var(--jade); color: #14100B; }
 
-/* ========== 首页 Hero ========== */
-.hero { 
-  position: relative; height: 100vh; display: grid; place-items: center; text-align: center; overflow: hidden; 
-}
-.hero-mountains { position: absolute; bottom: 0; left: 0; width: 100%; height: 55vh; pointer-events: none; z-index: 1; }
-.hero-inner { position: relative; z-index: 3; padding: 0 24px; }
-.hero .kicker { font-size: 14px; letter-spacing: .6em; color: var(--gold); margin-bottom: 22px; opacity: 0; animation: fadeUp 1s .2s forwards; }
-.hero h1 { font-size: clamp(48px, 9vw, 120px); letter-spacing: .2em; line-height: 1.1; margin-bottom: 26px; opacity: 0; animation: fadeUp 1.2s .5s forwards; text-shadow: 0 4px 40px rgba(0,0,0,1); }
-.hero .sub { font-size: clamp(14px, 2vw, 18px); letter-spacing: .3em; color: var(--ink); margin-bottom: 54px; opacity: 0; animation: fadeUp 1s .9s forwards; text-shadow: 0 2px 10px rgba(0,0,0,0.8); }
-.hero .cta { display: inline-block; padding: 16px 46px; border: 1px solid var(--gold); color: var(--gold); letter-spacing: .35em; font-size: 15px; position: relative; overflow: hidden; opacity: 0; animation: fadeUp 1s 1.3s forwards; transition: color .4s; background: rgba(14,12,10,0.5); backdrop-filter: blur(5px); }
-.hero .cta::before { content: ""; position: absolute; inset: 0; background: var(--gold); transform: translateY(101%); transition: transform .45s cubic-bezier(.7,0,.2,1); z-index: -1; }
-.hero .cta:hover { color: #14100c; }
-.hero .cta:hover::before { transform: translateY(0); }
-.about-link { position: absolute; bottom: 30px; right: 40px; font-size: 12px; letter-spacing: 0.2em; color: var(--gold); z-index: 10; text-decoration: underline; opacity: 0.7; transition: 0.3s; }
-.about-link:hover { opacity: 1; color: var(--gold-l); }
-@keyframes fadeUp { from { opacity: 0; transform: translateY(28px); } to { opacity: 1; transform: translateY(0); } }
-
-/* ========== 四季页 ========== */
+/* ========== 四季页 (完美修复卡片排版，字正常大) ========== */
 .seasons { position: relative; width: 100vw; height: 100vh; min-height: 800px; overflow: hidden; background-color: #0e0c0a; display: flex; align-items: center; justify-content: center; }
 .seasons-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
 .bg-item { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-size: cover; background-position: center; opacity: 0; transition: opacity 0.8s ease; filter: blur(12px) brightness(0.6); transform: scale(1.05); }
@@ -115,14 +94,15 @@ img { max-width: 100%; display: block; }
 .season-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
 .season-card { position: relative; height: 380px; border: none; background-size: cover; background-position: center; transition: transform 0.4s, box-shadow 0.4s; overflow: hidden; box-shadow: 0 10px 20px -10px rgba(0,0,0,0.5); }
 .season-card:hover { transform: translateY(-8px); box-shadow: 0 20px 40px rgba(0,0,0,0.8); }
-.card-mask { display: none; }
+
+/* 恢复超大字体和排版 */
 .card-content { position: relative; z-index: 2; padding: 30px 24px; height: 100%; display: flex; flex-direction: column; }
-.season-card .cn { font-size: 56px; color: #fff; line-height: 1; text-shadow: 0 4px 12px rgba(0,0,0,1), 0 0 20px rgba(0,0,0,0.8); }
-.season-card .en { font-size: 13px; color: #fff; letter-spacing: 0.3em; margin: 10px 0 20px; text-shadow: 0 2px 6px rgba(0,0,0,1); font-weight: bold; }
-.season-card .term { font-size: 15px; color: var(--gold-l); margin-bottom: 10px; font-weight: bold; text-shadow: 0 2px 6px rgba(0,0,0,1), 0 0 10px rgba(0,0,0,1); }
-.season-card .desc { font-size: 14px; color: #fff; line-height: 1.6; text-shadow: 0 2px 6px rgba(0,0,0,1), 0 0 10px rgba(0,0,0,1); font-weight: 500; }
-.season-card .go { margin-top: auto; font-size: 14px; color: var(--gold-l); letter-spacing: 0.2em; font-weight: bold; transition: 0.3s; text-shadow: 0 2px 6px rgba(0,0,0,1); }
-.season-card:hover .go { color: #fff; }
+.season-card .cn { font-size: 56px; color: #FFEAC2; line-height: 1; text-shadow: 0 4px 12px rgba(0,0,0,1); font-weight: bold; }
+.season-card .en { font-size: 13px; color: #E8C98F; letter-spacing: 0.3em; margin: 10px 0 20px; text-shadow: 0 2px 6px rgba(0,0,0,1); font-weight: bold; }
+.season-card .term { font-size: 15px; color: #FFFFFF; margin-bottom: 10px; font-weight: bold; text-shadow: 0 2px 6px rgba(0,0,0,1); }
+.season-card .desc { font-size: 14px; color: #FFFFFF; line-height: 1.6; text-shadow: 0 2px 6px rgba(0,0,0,1); }
+.season-card .go { margin-top: auto; font-size: 14px; color: #FFEAC2; letter-spacing: 0.2em; font-weight: bold; transition: 0.3s; text-shadow: 0 2px 6px rgba(0,0,0,1); }
+
 .season-extra { margin-top: 50px; display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
 
 /* ========== 地图页 ========== */

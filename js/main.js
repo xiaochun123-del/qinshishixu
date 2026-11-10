@@ -63,8 +63,8 @@ function getQuery(key, def = '') {
   return new URLSearchParams(location.search).get(key) || def;
 }
 
-// 完全贴合你现在的文件名
+// ★ 完美匹配你截图里的 assets/img/f (1).png
 function getImgBg(id) {
   const num = id.replace('f', '');
-  return `url('assets/f (${num}).png')`;
+  return `url('assets/img/f (${num}).png')`;
 }
