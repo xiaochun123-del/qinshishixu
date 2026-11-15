@@ -47,8 +47,9 @@ function playDing() {
 function renderNav(active) {
   const nav = document.createElement('nav');
   nav.className = "nav";
+  // 名字已经改成了“秦时食绘”
   nav.innerHTML = `
-    <a href="index.html" class="logo">秦时食序</a>
+    <a href="index.html" class="logo">秦时食绘</a>
     <div class="links">
       <a href="seasons.html" class="${active==='seasons'?'active':''}">四时</a>
       <a href="collection.html" class="${active==='collection'?'active':''}">集卡册</a>

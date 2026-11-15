@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>探索坊 · 秦时食序</title>
+<title>探索坊 · 秦时食绘</title>
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -31,21 +31,43 @@
     <div class="memo-wrap">
       <div class="memo-form">
         <h3 style="color:var(--gold); margin-bottom:15px;">写一条留念</h3>
-        <div class="field"><label>标题</label><input type="text" id="memoTitle" placeholder="比如：第一次吃泡馍"></div>
-        <div class="field"><label>心得</label><textarea id="memoNote" placeholder="味道怎么样，和谁一起……"></textarea></div>
         <div class="field">
-          <label>照片</label>
+          <label>标题</label>
+          <input type="text" id="memoTitle" placeholder="比如：第一次吃泡馍" autocomplete="off" style="ime-mode: active;">
+        </div>
+        <div class="field">
+          <label>心得</label>
+          <textarea id="memoNote" placeholder="味道怎么样，和谁一起……" autocomplete="off" style="ime-mode: active;"></textarea>
+        </div>
+        
+        <div class="field">
+          <label>选择专属明信片封面（陕西文物）</label>
+          <select id="memoStamp" style="width:100%; padding:10px; background:#1B140E; border:1px solid var(--line); color:var(--ink); border-radius:3px;">
+            <option value="大雁塔">大雁塔（长安古韵）</option>
+            <option value="古城墙">古城墙（岁月斑驳）</option>
+            <option value="钟楼">钟楼（晨钟暮鼓）</option>
+            <option value="碑林">碑林（翰墨飘香）</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>美食照片</label>
           <div class="upload-box" onclick="document.getElementById('memoFile').click()">点击选择照片</div>
           <input type="file" id="memoFile" accept="image/*" style="display:none" onchange="handleImg(event)">
           <div id="memoThumb" style="margin-top:10px;"></div>
         </div>
-        <button class="btn pri" style="width:100%; padding:10px;" onclick="saveMemo()">保存留念</button>
+        <button class="btn pri" style="width:100%; padding:10px;" onclick="saveMemo()">生成专属明信片</button>
       </div>
       <div class="memo-grid" id="memoGrid"></div>
     </div>
   </div>
 </section>
+
+<div class="mask" id="postcardMask">
+  <div class="postcard-modal" id="postcardModal"></div>
+</div>
 <div class="mask" id="mask"><div class="modal" id="modal"></div></div>
+
 <script src="js/data.js"></script>
 <script src="js/main.js"></script>
 <script src="js/extra.js"></script>

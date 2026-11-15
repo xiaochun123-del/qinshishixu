@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>集卡册 · 秦时食序</title>
+<title>集卡册 · 秦时食绘</title>
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -62,7 +62,7 @@ function renderCards() {
         ${list.map(f => {
           const isGot = unlocked.includes(f.id);
           const bgStyle = `background-image: ${getImgBg(f.id)};`;
-          return `<div class="gcard ${isGot?'got':''}" onclick="openDish('${f.id}')">
+          return `<div class="gcard ${isGot?'got':''}" onclick="toggleEat('${f.id}', this)">
             <div class="thumb" style="${bgStyle}"></div>
             <div class="cn">${isGot ? f.name : '未点亮'}</div>
             <div class="cc">${f.city} · ${f.taste}</div>
@@ -74,26 +74,36 @@ function renderCards() {
   }).join('');
 }
 
-function openDish(id) {
-  const f = FOODS.find(x => x.id === id);
-  if (!f) return;
-  const isGot = getUnlocked().includes(id);
-  $('#modal').innerHTML = `
-    <div class="mhead"><button class="close" onclick="closeModal()">×</button><h3>${f.name}</h3></div>
-    <div class="mbody"><p class="desc">${f.desc}</p></div>
-    <div class="mfoot"><button class="btn ${isGot?'jade':'pri'}" onclick="toggleEat('${f.id}')">${isGot ? '已点亮 ✓' : '点亮打卡'}</button></div>`;
-  $('#mask').classList.add('on');
-}
-function closeModal() { $('#mask').classList.remove('on'); }
-
-function toggleEat(id) {
+function toggleEat(id, cardElement) {
   let unlocked = getUnlocked();
-  if (unlocked.includes(id)) { unlocked = unlocked.filter(x => x !== id); toast('取消点亮'); }
-  else { unlocked.push(id); toast('点亮成功'); playDing(); }
+  if (unlocked.includes(id)) { 
+    unlocked = unlocked.filter(x => x !== id); 
+    toast('取消点亮'); 
+  }
+  else { 
+    unlocked.push(id); 
+    toast('点亮成功'); 
+    playDing(); 
+    
+    if (cardElement) {
+      const thumb = cardElement.querySelector('.thumb');
+      if (thumb) {
+        const rect = thumb.getBoundingClientRect();
+        const stamp = document.createElement('div');
+        stamp.className = 'stamp-effect play';
+        stamp.innerHTML = '秦'; 
+        // 集卡册卡片较小，位置微调
+        stamp.style.left = (rect.right - 40) + 'px';
+        stamp.style.top = (rect.bottom - 40) + 'px';
+        document.body.appendChild(stamp);
+        setTimeout(() => stamp.remove(), 2000); 
+      }
+    }
+  }
   saveUnlocked(unlocked);
   renderCards();
-  closeModal();
 }
+
 renderCards();
 </script>
 </body>

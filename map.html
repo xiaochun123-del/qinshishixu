@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>时令地图 · 秦时食序</title>
+<title>时令地图 · 秦时食绘</title>
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -110,7 +110,7 @@ function renderList() {
         <div class="dc-top"><h4>${f.name}</h4><span class="city">${f.city}</span></div>
         <div class="dc-desc">${f.desc}</div>
         <div class="dc-acts">
-          <button class="btn ${isEaten?'jade':'ghost'}" onclick="event.stopPropagation(); toggleEat('${f.id}')">${isEaten?'已打卡':'打卡'}</button>
+          <button class="btn ${isEaten?'jade':'ghost'}" onclick="event.stopPropagation(); toggleEat('${f.id}', false, this)">${isEaten?'已打卡':'打卡'}</button>
           <button class="btn ${isWish?'pri':'ghost'}" onclick="event.stopPropagation(); toggleWish('${f.id}')">${isWish?'已收藏':'收藏'}</button>
         </div>
       </div>
@@ -135,7 +135,7 @@ function openDishDetail(id) {
       <p style="color:var(--gold); font-size:13px; margin-top:5px;">${f.city} · ${f.region} · ${SEASON_NAMES[f.season]}季</p>
     </div>
     <div class="mbody">
-      <div style="height:180px; background-size:cover; background-position:center; border-radius:4px; margin-bottom:15px; ${bgStyle}"></div>
+      <div id="modal-img-container" style="height:180px; background-size:cover; background-position:center; border-radius:4px; margin-bottom:15px; position:relative; ${bgStyle}"></div>
       <p class="desc" style="font-size:16px; font-weight:bold; margin-bottom:10px; color:var(--ink);">${f.desc}</p>
       <div style="font-size:13px; color:var(--ink-dim); line-height:1.8;">
         <p><b style="color:var(--gold);">地域文化：</b>${regionCulture}</p>
@@ -143,7 +143,7 @@ function openDishDetail(id) {
       </div>
     </div>
     <div class="mfoot">
-      <button class="btn ${isEaten?'jade':'pri'}" onclick="toggleEat('${f.id}', true)">${isEaten?'已点亮打卡 ✓':'点亮打卡'}</button>
+      <button class="btn ${isEaten?'jade':'pri'}" onclick="toggleEat('${f.id}', true, this)">${isEaten?'已点亮打卡 ✓':'点亮打卡'}</button>
       <button class="btn ${isWish?'pri':'ghost'}" onclick="toggleWish('${f.id}', true)">${isWish?'已收藏 ♥':'收藏'}</button>
     </div>
   `;
@@ -152,11 +152,41 @@ function openDishDetail(id) {
 
 function closeModal() { $('#mask').classList.remove('on'); }
 
-function toggleEat(id, isModal = false) {
+function toggleEat(id, isModal = false, btnElement) {
   let unlocked = getUnlocked();
-  if (unlocked.includes(id)) { unlocked = unlocked.filter(x => x !== id); toast('取消打卡'); }
-  else { unlocked.push(id); toast('点亮成功'); playDing(); }
+  if (unlocked.includes(id)) { 
+    unlocked = unlocked.filter(x => x !== id); 
+    toast('取消打卡'); 
+  }
+  else { 
+    unlocked.push(id); 
+    toast('点亮成功'); 
+    playDing(); 
+    
+    if (btnElement) {
+      let targetImage = null;
+      if (isModal) {
+        targetImage = document.getElementById('modal-img-container');
+      } else {
+        const card = btnElement.closest('.dish-card');
+        if (card) targetImage = card.querySelector('.thumb');
+      }
+
+      if (targetImage) {
+        const rect = targetImage.getBoundingClientRect();
+        const stamp = document.createElement('div');
+        stamp.className = 'stamp-effect play';
+        stamp.innerHTML = '秦'; 
+        // 印章变大，所以偏移量改成 50px 才能完美落在右下角
+        stamp.style.left = (rect.right - 50) + 'px';
+        stamp.style.top = (rect.bottom - 50) + 'px';
+        document.body.appendChild(stamp);
+        setTimeout(() => stamp.remove(), 2000); 
+      }
+    }
+  }
   saveUnlocked(unlocked);
+  
   let st = getExtraState(); st.wish = st.wish.filter(x=>x!==id); saveExtraState(st);
   renderList(); if (isModal) openDishDetail(id); 
 }
@@ -169,6 +199,30 @@ function toggleWish(id, isModal = false) {
 }
 
 initMap();
+
+// ===== 卡片 3D 悬浮倾斜特效 =====
+document.addEventListener('mousemove', e => {
+  const card = e.target.closest('.dish-card');
+  if (!card) return;
+  const rect = card.getBoundingClientRect();
+  const x = e.clientX - rect.left;
+  const y = e.clientY - rect.top;
+  
+  const centerX = rect.width / 2;
+  const centerY = rect.height / 2;
+  const rotateX = ((y - centerY) / centerY) * -10;
+  const rotateY = ((x - centerX) / centerX) * 10;
+
+  card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+  card.style.transition = 'transform 0.1s ease-out';
+});
+
+document.addEventListener('mouseout', e => {
+  const card = e.target.closest('.dish-card');
+  if (!card) return;
+  card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
+  card.style.transition = 'transform 0.4s ease-in-out';
+});
 </script>
 </body>
 </html>

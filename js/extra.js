@@ -1,5 +1,28 @@
 renderNav('extra');
 
+// 🔥 扩充到 12 句诗词
+const POEMS = [
+  "长安一片月，万户捣衣声。",
+  "秦中自古帝王州，烟火最抚凡人心。",
+  "夜市千灯照碧云，高楼红袖客纷纷。",
+  "春风得意马蹄疾，一日看尽长安花。",
+  "人间有味是清欢。",
+  "八百里秦川，三千万老陕。",
+  "暗闻歌吹声，知是长安路。",
+  "长安白日照春空，绿杨结烟垂袅风。",
+  "秦地罗敷女，采桑绿水边。",
+  "长安古道马迟迟，高柳乱蝉嘶。",
+  "秋风吹渭水，落叶满长安。",
+  "浮云游子意，落日故人情。"
+];
+
+const STAMP_IMGS = {
+  '大雁塔': 'assets/img/dayanta.png',
+  '古城墙': 'assets/img/guchengqiang.png',
+  '钟楼': 'assets/img/zhonglou.png',
+  '碑林': 'assets/img/beilin.png'
+};
+
 function switchTab(name) {
   $$('.tabs button').forEach((b, i) => b.classList.toggle('on', ['wish','mix','memo'][i] === name));
   $$('.tab-content').forEach(c => c.classList.toggle('on', c.id === 'tab-' + name));
@@ -96,19 +119,101 @@ function renderMemo() {
     el.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--ink-dim)">还没有留念，写下第一条吧</div>`;
     return;
   }
+  
   el.innerHTML = st.memo.map(m => `
-    <div class="memo-card">
-      ${m.img ? `<img src="${m.img}">` : `<div style="height:120px;background:#2a1e14;"></div>`}
-      <div class="mb">
-        <h4 style="color:var(--gold-l); margin-bottom:6px;">${m.title||'无名留念'}</h4>
-        <p style="font-size:13px; color:var(--ink-dim); line-height:1.5;">${m.note}</p>
-        <div style="display:flex; justify-content:space-between; margin-top:10px; font-size:11px; color:#8F7C63;">
+    <div class="memo-card" onclick="openPostcard('${m.id}')" style="cursor:pointer;">
+      <div class="del-btn" onclick="event.stopPropagation(); delMemo('${m.id}')">×</div>
+      <div class="memo-inner">
+        <div class="memo-header">秦时食绘 · 专属留念</div>
+        ${m.img ? `<img src="${m.img}">` : `<div style="height:160px; background:#1a1410; margin-bottom:15px; border:1px dashed var(--line); display:flex; justify-content:center; align-items:center; color:var(--faint); font-size:12px;">未上传照片</div>`}
+        <h4 style="color:var(--gold-l); margin-bottom:8px; font-size:18px;">${m.title||'无名留念'}</h4>
+        <p style="font-size:13px; color:var(--ink-dim); line-height:1.6; flex:1;">${m.note}</p>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:15px; border-top:1px solid rgba(201,161,90,0.2); padding-top:10px; font-size:11px; color:var(--faint);">
           <span>${m.date}</span>
-          <button onclick="delMemo('${m.id}')" style="color:#8F7C63;">删除</button>
+          <span style="font-family:'STKaiti', serif; color:#C14E31; border:1px solid #C14E31; padding:2px 4px; border-radius:2px;">${m.stampName || '大雁塔'}</span>
         </div>
       </div>
     </div>
   `).join('');
+}
+
+function openPostcard(id) {
+  const st = getExtraState();
+  const m = st.memo.find(x => x.id === id);
+  if (!m) return;
+
+  let rawPoem = m.poem || "人间有味是清欢。";
+  rawPoem = rawPoem.replace(/。/g, ''); 
+  const finalPoem = `“${rawPoem}”`;
+
+  const stampName = m.stampName || '大雁塔';
+  const coverImg = STAMP_IMGS[stampName] || '';
+
+  $('#postcardModal').innerHTML = `
+    <button class="close-btn" onclick="event.stopPropagation(); closePostcard()">×</button>
+    
+    <div class="pc-3d-scene">
+      <div class="pc-3d-card" onclick="this.classList.toggle('flipped')">
+        
+        <div class="pc-face pc-front">
+          <div class="pc-front-frame">
+            ${coverImg ? `<img src="${coverImg}">` : `<div class="cover-fallback">${stampName}</div>`}
+          </div>
+          <div class="pc-front-info">
+            <h2 class="pc-front-title">${stampName}</h2>
+            <p class="pc-front-sub">秦地拾遗 · 专属留念</p>
+          </div>
+        </div>
+
+        <div class="pc-face pc-back">
+          
+          <div class="pc-back-left">
+            <div class="photo-frame">
+               ${m.img ? `<img src="${m.img}" class="user-photo">` : `<div class="user-photo empty">美食照片</div>`}
+            </div>
+            <div class="photo-caption">${m.title||'无名留念'}</div>
+            
+            <div class="calligraphy-signature">
+              <span class="big-qin">秦</span>
+              <span class="small-shishihui">时<br>食<br>绘</span>
+            </div>
+          </div>
+
+          <div class="pc-back-right">
+            
+            <div class="pc-back-top">
+              <div class="pc-zip-codes">
+                <span></span><span></span><span></span><span></span><span></span><span></span>
+              </div>
+              
+              <div class="stamp-frame">
+                ${coverImg ? `<img src="${coverImg}" class="stamp-img">` : `<div style="width:100%;height:100%;background:#ccc;"></div>`}
+              </div>
+            </div>
+
+            <div class="pc-poem-area">
+              <p class="pc-calligraphy">${finalPoem}</p>
+            </div>
+
+            <div class="pc-write-area">
+              <div class="pc-salutation">致：</div>
+              <div class="pc-text-content">${m.note}</div>
+              <div class="pc-date">${m.date}</div>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  `;
+  $('#postcardMask').classList.add('on');
+}
+
+function closePostcard() {
+  $('#postcardMask').classList.remove('on');
+  $('#postcardModal').innerHTML = '';
 }
 
 function handleImg(e) {
@@ -133,17 +238,29 @@ function handleImg(e) {
 function saveMemo() {
   const title = $('#memoTitle').value.trim();
   const note = $('#memoNote').value.trim();
+  const stampVal = $('#memoStamp').value; 
+  
   if (!title && !note && !pendingImg) return toast('至少写一句或选一张图');
   const d = new Date();
-  const date = `${d.getFullYear()}.${d.getMonth()+1}.${d.getDate()}`;
+  const date = `${d.getFullYear()}.${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')}`;
+  
+  // 强制随机抽取
+  const randomIndex = Math.floor(Math.random() * POEMS.length);
+  const randomPoem = POEMS[randomIndex];
+
   let st = getExtraState();
-  st.memo.unshift({ id: 'm'+Date.now(), title, note, img: pendingImg, date });
+  st.memo.unshift({ id: 'm'+Date.now(), title, note, img: pendingImg, stampName: stampVal, date, poem: randomPoem });
   saveExtraState(st);
+  
   $('#memoTitle').value = ''; $('#memoNote').value = ''; $('#memoThumb').innerHTML = ''; pendingImg = '';
-  renderMemo(); toast('留念已保存');
+  renderMemo(); 
+  toast('明信片已生成！点击卡片可翻面');
+  playDing();
 }
+
 function delMemo(id) {
   let st = getExtraState(); st.memo = st.memo.filter(x => x.id !== id); saveExtraState(st); renderMemo();
+  toast('已删除留念');
 }
 
 renderWish();

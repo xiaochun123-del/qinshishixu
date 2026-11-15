@@ -32,7 +32,7 @@ function renderQuiz() {
     return;
   }
 
-  if (step >= P_QUESTIONS.length) return renderResult();
+  if (step >= P_QUESTIONS.length) return computePersona();
 
   const q = P_QUESTIONS[step];
   const ax = P_AXES[q.axis];
@@ -59,41 +59,55 @@ function answer(side) { answers[step] = side; step++; renderQuiz(); }
 function prevStep() { if (step > 0) { step--; renderQuiz(); } }
 function backToCover() { step = -1; renderQuiz(); }
 
-function renderResult() {
-  const s = { taste:{l:0,r:0}, pace:{l:0,r:0}, scene:{l:0,r:0} };
-  P_QUESTIONS.forEach((q, i) => {
-    const a = answers[i]; if(!a) return;
-    s[q.axis][a==='a'?'l':'r'] += 3;
-  });
-  const letter = {};
-  Object.keys(P_AXES).forEach(k => {
-    letter[k] = s[k].l >= s[k].r ? P_AXES[k].left : P_AXES[k].right;
-  });
-  const code = letter.taste + letter.pace + letter.scene;
-  const p = P_PERSONAS[code];
-  const food = FOODS.find(f => f.name === p.dish);
+// 核心计算逻辑（加入了揭晓动画）
+function computePersona() {
+  // 显示遮罩层
+  const mask = $('#revealMask');
+  mask.classList.add('on');
+  
+  // 播放音效
+  playDing();
 
-  savePersona(code);
+  // 延迟 2 秒后展示真实结果
+  setTimeout(() => {
+    // 计算结果
+    const s = { taste:{l:0,r:0}, pace:{l:0,r:0}, scene:{l:0,r:0} };
+    P_QUESTIONS.forEach((q, i) => {
+      const a = answers[i]; if(!a) return;
+      s[q.axis][a==='a'?'l':'r'] += 3;
+    });
+    const letter = {};
+    Object.keys(P_AXES).forEach(k => {
+      letter[k] = s[k].l >= s[k].r ? P_AXES[k].left : P_AXES[k].right;
+    });
+    const code = letter.taste + letter.pace + letter.scene;
+    const p = P_PERSONAS[code];
+    const food = FOODS.find(f => f.name === p.dish);
+    savePersona(code);
 
-  // 恢复到之前干净清爽的卡片样式
-  $('#quizBox').innerHTML = `
-    <div class="pq pq-res">
-      <div style="font-size:12px; letter-spacing:.4em; color:var(--gold);">你 的 秦 味 人 格</div>
-      <div class="pq-code">${code.split('').join(' · ')}</div>
-      <div class="pq-name"><span class="pq-seal">${p.seal}</span>${p.name}</div>
-      <div class="pq-tagline">${p.tag}</div>
-      <p class="pq-desc">${p.desc}</p>
-      <div class="pq-meta">
-        <div><span>代 表</span><b>${p.dish}</b></div>
-        <div><span>属 地</span><b>${p.city}</b></div>
-        <div><span>关 键 词</span><b>${p.keys}</b></div>
-      </div>
-      <div class="pq-actions" style="margin-top: 40px;">
-        <button class="btn ghost" onclick="backToCover()">← 返回封面</button>
-        <a href="map.html?season=${food?food.season:'spring'}" class="btn pri">去地图找这道菜 →</a>
-        <a href="seasons.html" class="btn ghost">返回四时</a>
-      </div>
-    </div>`;
+    // 隐藏遮罩
+    mask.classList.remove('on');
+
+    // 渲染结果页
+    $('#quizBox').innerHTML = `
+      <div class="pq pq-res" style="animation: pop 0.6s cubic-bezier(0.2, 0.9, 0.3, 1.2);">
+        <div style="font-size:12px; letter-spacing:.4em; color:var(--gold);">你 的 秦 味 人 格</div>
+        <div class="pq-code">${code.split('').join(' · ')}</div>
+        <div class="pq-name"><span class="pq-seal">${p.seal}</span>${p.name}</div>
+        <div class="pq-tagline">${p.tag}</div>
+        <p class="pq-desc">${p.desc}</p>
+        <div class="pq-meta">
+          <div><span>代 表</span><b>${p.dish}</b></div>
+          <div><span>属 地</span><b>${p.city}</b></div>
+          <div><span>关 键 词</span><b>${p.keys}</b></div>
+        </div>
+        <div class="pq-actions" style="margin-top: 40px;">
+          <button class="btn ghost" onclick="backToCover()">← 返回封面</button>
+          <a href="map.html?season=${food?food.season:'spring'}" class="btn pri">去地图找这道菜 →</a>
+          <a href="seasons.html" class="btn ghost">返回四时</a>
+        </div>
+      </div>`;
+  }, 2000); // 2000毫秒 = 2秒后出结果
 }
 
 renderQuiz();
