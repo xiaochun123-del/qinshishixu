@@ -69,7 +69,7 @@ img { max-width: 100%; display: block; }
 /* 四季页 */
 .seasons { position: relative; width: 100vw; height: 100vh; min-height: 800px; overflow: hidden; background-color: #0e0c0a; display: flex; align-items: center; justify-content: center; }
 .seasons-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
-.bg-item { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-size: cover; background-position: center; opacity: 0; transition: opacity 0.8s ease; filter: blur(12px) brightness(0.6); transform: scale(1.05); }
+.bg-item { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-size: cover; background-position: center; opacity: 0; transition: opacity 0.8s ease; filter: blur(12px) brightness(0.85); transform: scale(1.05); }
 .seasons[data-active="spring"] .bg-spring { opacity: 1; } .seasons[data-active="summer"] .bg-summer { opacity: 1; } .seasons[data-active="autumn"] .bg-autumn { opacity: 1; } .seasons[data-active="winter"] .bg-winter { opacity: 1; }
 .seasons-inner { position: relative; z-index: 2; width: 100%; max-width: 1200px; padding: 0 20px; }
 .seasons h2 { font-size: 40px; letter-spacing: 0.3em; text-align: center; color: var(--gold-l); text-shadow: 0 4px 15px rgba(0,0,0,1); }
